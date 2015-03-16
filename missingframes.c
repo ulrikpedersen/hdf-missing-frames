@@ -23,6 +23,7 @@
  */
 
 /* TEST1: Reproducing the original problem */
+/*
 #define FILENAME    "repro_test1.h5"
 #define NUM_FRAMES 65540
 #define FRAME_DIMS {1, 4, 6}
@@ -30,6 +31,7 @@
 #define ISTOREK 32770
 #define CACHE_SIZE 192
 #define CACHE_SLOTS 3
+*/
 
 
 /* TEST2: decrease the number of chunks by increasing the chunk sizes and
@@ -46,7 +48,6 @@
 
 
 /* TEST3: decrease the istorek parameter by 1 and the problem goes away */
-/*
 #define FILENAME    "repro_test3.h5"
 #define NUM_FRAMES 65540
 #define FRAME_DIMS {1, 4, 6}
@@ -54,14 +55,15 @@
 #define ISTOREK 32769
 #define CACHE_SIZE 192
 #define CACHE_SLOTS 3
-*/
 
 
 /* End of configuration
  *
  **********************************************************************/
 
+#include <string.h>
 #include <assert.h>
+#include <stdio.h>
 #include "hdf5.h"
 
 #define DATASETNAME "ExtendibleArray"
@@ -173,5 +175,66 @@ int main (int argc, char* argv[])
     assert(status >= 0);
     status = H5Fclose (file);
     assert(status >= 0);
+
+
+    /********************************************
+     * Re-open the file and read the data back. *
+     ********************************************/
+    hsize_t      dims_read[3] = {1,4,6};
+    int          data_read[4][6];
+
+    file = H5Fopen (FILENAME, H5F_ACC_RDONLY, H5P_DEFAULT);
+    assert(file >= 0);
+    dataset = H5Dopen2 (file, DATASETNAME, H5P_DEFAULT);
+    assert(dataset >= 0);
+
+    filespace = H5Dget_space (dataset);
+    assert(filespace >= 0);
+    hsize_t rank = H5Sget_simple_extent_ndims (filespace);
+    assert(rank == RANK);
+
+    status = H5Sget_simple_extent_dims (filespace, dims, NULL);
+    assert(status >= 0);
+
+    prop = H5Dget_create_plist (dataset);
+    assert(prop >= 0);
+
+    memspace = H5Screate_simple (RANK, dims_read, NULL);
+    assert(memspace >= 0);
+
+    unsigned int missing_frames = 0;
+    int first_missing_frame = 0;
+    for (i = 0; i < dims[0]; i++)
+    {
+        memset(data_read, 0, 4*6 * sizeof(int)); // Reset the data buffer
+        assert(data_read[0][0] == 0);
+        assert(data_read[1][0] == 0);
+
+        offset[0] = i;
+        status = H5Sselect_hyperslab(filespace, H5S_SELECT_SET, offset, NULL,
+                                     dims_read, NULL);
+        assert(status >= 0);
+
+        status = H5Dread (dataset, H5T_NATIVE_INT, memspace, filespace,
+                          H5P_DEFAULT, data_read);
+        assert(status >= 0);
+
+        //printf("%d %d %d\n", data_read[0][0], data_read[1][0], data_read[3][0]);
+        if (data_read[0][0] != data[0][0]) {
+            if (first_missing_frame == 0) first_missing_frame = i+1;
+            missing_frames++;
+        }
+    }
+
+    status = H5Pclose (prop);
+    status = H5Dclose (dataset);
+    status = H5Sclose (filespace);
+    status = H5Sclose (memspace);
+    status = H5Fclose (file);
+
+    printf("Missing number of frames: %u\n", missing_frames);
+    if (missing_frames > 0) printf("First missing frame: %d\n", first_missing_frame);
+    else printf("All OK!\n");
+
     return 0;
 }
