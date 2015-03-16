@@ -91,65 +91,87 @@ int main (int argc, char* argv[])
                                 {41, 42, 43, 44, 45, 46} };
 
     /* Variables used in extending and writing to the extended portion of dataset */
-    //hsize_t      size[3];
     hsize_t      offset[3] = {0, 0, 0};
-
     hsize_t      i=0;
 
     access_plist = H5Pcreate(H5P_FILE_ACCESS);
-    H5Pset_fclose_degree(access_plist, H5F_CLOSE_STRONG);
+    assert(access_plist >= 0);
+    status = H5Pset_fclose_degree(access_plist, H5F_CLOSE_STRONG);
+    assert(status >= 0);
 
     create_plist = H5Pcreate(H5P_FILE_CREATE);
+    assert(create_plist >= 0);
     status = H5Pset_istore_k(create_plist, ISTOREK);
+    assert(status >= 0);
 
     /* Create a new file. If file exists its contents will be overwritten. */
     file = H5Fcreate (FILENAME, H5F_ACC_TRUNC, create_plist, access_plist);
+    assert(file >= 0);
 
     /* Modify dataset creation properties, i.e. enable chunking  */
     prop = H5Pcreate (H5P_DATASET_CREATE);
+    assert(prop >= 0);
     status = H5Pset_chunk (prop, RANK, chunk_dims);
+    assert(status >= 0);
+
     status = H5Pset_fill_value(prop, H5T_NATIVE_INT, (void*)&fillvalue );
+    assert(status >= 0);
 
     /* Create the data space with unlimited dimensions. */
     dataspace = H5Screate_simple (RANK, dims, maxdims);
+    assert(dataspace >= 0);
 
     dset_access_plist = H5Pcreate(H5P_DATASET_ACCESS);
+    assert(dset_access_plist >= 0);
     status = H5Pset_chunk_cache( dset_access_plist, CACHE_SLOTS, CACHE_SIZE, 1.0);
+    assert(status >= 0);
 
     /* Create a new dataset within the file using chunk
        creation properties.  */
     dataset = H5Dcreate2 (file, DATASETNAME, H5T_NATIVE_INT, dataspace,
                          H5P_DEFAULT, prop, dset_access_plist);
+    assert(dataset >= 0);
 
     /* Define memory space */
     memspace = H5Screate_simple (RANK, data_dims, maxdims);
+    assert(memspace >= 0);
 
     dims[0] = 0;
     for (i=0; i < NUM_FRAMES; i++) {
         /* Extend the dataset.  */
         dims[0]++;
         status = H5Dset_extent (dataset, dims);
+        assert(status >= 0);
 
         /* Select a hyperslab in extended portion of dataset  */
         filespace = H5Dget_space (dataset);
+        assert(filespace >= 0);
 
         status = H5Sselect_hyperslab (filespace, H5S_SELECT_SET, offset, NULL,
                                       data_dims, NULL);
+        assert(status >= 0);
         offset[0]++;
 
         /* Write the data to the extended portion of dataset  */
         status = H5Dwrite (dataset, H5T_NATIVE_INT, memspace, filespace,
                            H5P_DEFAULT, data);
+        assert(status >= 0);
 
         status = H5Sclose (filespace);
+        assert(status >= 0);
     }
 
 
     /* Close resources */
     status = H5Dclose (dataset);
+    assert(status >= 0);
     status = H5Pclose (prop);
+    assert(status >= 0);
     status = H5Sclose (dataspace);
+    assert(status >= 0);
     status = H5Sclose (memspace);
+    assert(status >= 0);
     status = H5Fclose (file);
+    assert(status >= 0);
     return 0;
 }
