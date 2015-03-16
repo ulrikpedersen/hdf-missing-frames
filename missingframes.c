@@ -17,12 +17,12 @@
  *
  * After some experimentation, two things seems to make a difference:
  *
- *  1) decrease the number of chunks in the dataset.
- *  2) decrease the istorek parameter.
+ *  1) decrease the number of chunks in the dataset (TEST2)
+ *  2) decrease the istorek parameter by 1 or more (TEST3)
  *
  */
 
-/* TEST1: Reproducing the problem */
+/* TEST1: Reproducing the original problem */
 /*
 #define FILENAME    "/scratch/repro_test1.h5"
 #define NUM_FRAMES 65540
@@ -47,12 +47,12 @@
 */
 
 
-/* TEST3:  */
+/* TEST3: decrease the istorek parameter by 1 and the problem goes away */
 #define FILENAME    "/scratch/repro_test3.h5"
 #define NUM_FRAMES 65540
 #define FRAME_DIMS {1, 4, 6}
 #define CHUNK_DIMS {1, 4, 6}
-#define ISTOREK 123
+#define ISTOREK 32769
 #define CACHE_SIZE 192
 #define CACHE_SLOTS 3
 
