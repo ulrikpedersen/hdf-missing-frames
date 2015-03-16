@@ -2,21 +2,71 @@
  * missingframes.c
  *
  *  Created on: 16 Mar 2015
- *      Author: up45
+ *      Author: Ulrik Kofoed Pedersen
  */
 
 
+/**********************************************************************
+ *
+ * Configure the TESTs by commenting/un-commenting the relevant
+ * setup in the #defines below here...
+ *
+ * Note that we write very small 'frames' of 4x6 32bit integers in this example.
+ * Increasing the size of the frames - or changing the datatype does not
+ * influence the issue.
+ *
+ * After some experimentation, two things seems to make a difference:
+ *
+ *  1) decrease the number of chunks in the dataset.
+ *  2) decrease the istorek parameter.
+ *
+ */
+
+/* TEST1: Reproducing the problem */
+/*
+#define FILENAME    "/scratch/repro_test1.h5"
+#define NUM_FRAMES 65540
+#define FRAME_DIMS {1, 4, 6}
+#define CHUNK_DIMS {1, 4, 6}
+#define ISTOREK 32770
+#define CACHE_SIZE 192
+#define CACHE_SLOTS 3
+*/
+
+
+/* TEST2: decrease the number of chunks by increasing the chunk sizes and
+ * problem goes away */
+/*
+#define FILENAME    "/scratch/repro_test2.h5"
+#define NUM_FRAMES 65540
+#define FRAME_DIMS {1, 4, 6}
+#define CHUNK_DIMS {2, 4, 6}
+#define ISTOREK 32770
+#define CACHE_SIZE 192
+#define CACHE_SLOTS 3
+*/
+
+
+/* TEST3:  */
+#define FILENAME    "/scratch/repro_test3.h5"
+#define NUM_FRAMES 65540
+#define FRAME_DIMS {1, 4, 6}
+#define CHUNK_DIMS {1, 4, 6}
+#define ISTOREK 123
+#define CACHE_SIZE 192
+#define CACHE_SLOTS 3
+
+
+/* End of configuration
+ *
+ **********************************************************************/
+
+#include <assert.h>
 #include "hdf5.h"
 
-#define FILENAME    "/scratch/repro.h5"
 #define DATASETNAME "ExtendibleArray"
 #define RANK         3
 
-#define NUM_FRAMES 65540
-#define FRAME_DIMS {1, 4, 6}
-#define ISTOREK 32770
-#define CACHE_SIZE 96
-#define CACHE_SLOTS 3277003
 
 int main (int argc, char* argv[])
 {
@@ -24,15 +74,15 @@ int main (int argc, char* argv[])
     hid_t        dataspace=-1, dataset=-1;
     hid_t        filespace=-1, memspace=-1;
     hid_t        prop=-1; // property list
-    hid_t access_plist=-1, create_plist=-1;
-    hid_t dset_access_plist = -1;
+    hid_t        access_plist=-1, create_plist=-1;
+    hid_t        dset_access_plist = -1;
 
 
     herr_t       status;
     hsize_t      dims[3]  = FRAME_DIMS;           /* dataset dimensions at creation time */
     hsize_t      maxdims[3] = FRAME_DIMS;
                  maxdims[0] = H5S_UNLIMITED;
-    hsize_t      chunk_dims[3] = FRAME_DIMS;
+    hsize_t      chunk_dims[3] = CHUNK_DIMS;
     int          fillvalue = 0;
     hsize_t      data_dims[3] = FRAME_DIMS;
     int          data[4][6] = { {11, 12, 13, 14, 15, 16},    /* data to write */
