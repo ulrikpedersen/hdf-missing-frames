@@ -17,3 +17,8 @@ Small test application to reproduce an issue when appending frames to an extendi
     Finished building target: hdf-missing-frames
      
     make: Leaving directory `/home/up45/workspaces/luna/hdf-missing-frames/Debug'
+
+
+Example output files are in the data directory.
+
+
