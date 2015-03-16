@@ -85,13 +85,15 @@
 								<option id="gnu.c.compiler.option.include.paths.1878917139" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/dls_sw/prod/tools/RHEL6-x86_64/hdf5/1-8-11/prefix/include"/>
 								</option>
+								<option id="gnu.c.compiler.option.dialect.std.98615199" superClass="gnu.c.compiler.option.dialect.std" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.debugging.other.1675923856" superClass="gnu.c.compiler.option.debugging.other" value="-DNDEBUG" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1636829447" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool command="/dls_sw/prod/tools/RHEL6-x86_64/hdf5/1-8-11/prefix/bin/h5cc" id="cdt.managedbuild.tool.gnu.c.linker.exe.release.1282623603" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.release">
-								<option id="gnu.c.link.option.libs.532298541" superClass="gnu.c.link.option.libs" valueType="libs">
+								<option id="gnu.c.link.option.libs.532298541" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="sz"/>
 								</option>
-								<option id="gnu.c.link.option.paths.1401939941" superClass="gnu.c.link.option.paths" valueType="libPaths">
+								<option id="gnu.c.link.option.paths.1401939941" name="Library search path (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/dls_sw/prod/tools/RHEL6-x86_64/szip/2-1/prefix/lib"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.947183720" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
