@@ -23,21 +23,19 @@
  */
 
 /* TEST1: Reproducing the original problem */
-/*
-#define FILENAME    "/scratch/repro_test1.h5"
+#define FILENAME    "repro_test1.h5"
 #define NUM_FRAMES 65540
 #define FRAME_DIMS {1, 4, 6}
 #define CHUNK_DIMS {1, 4, 6}
 #define ISTOREK 32770
 #define CACHE_SIZE 192
 #define CACHE_SLOTS 3
-*/
 
 
 /* TEST2: decrease the number of chunks by increasing the chunk sizes and
  * problem goes away */
 /*
-#define FILENAME    "/scratch/repro_test2.h5"
+#define FILENAME    "repro_test2.h5"
 #define NUM_FRAMES 65540
 #define FRAME_DIMS {1, 4, 6}
 #define CHUNK_DIMS {2, 4, 6}
@@ -48,13 +46,15 @@
 
 
 /* TEST3: decrease the istorek parameter by 1 and the problem goes away */
-#define FILENAME    "/scratch/repro_test3.h5"
+/*
+#define FILENAME    "repro_test3.h5"
 #define NUM_FRAMES 65540
 #define FRAME_DIMS {1, 4, 6}
 #define CHUNK_DIMS {1, 4, 6}
 #define ISTOREK 32769
 #define CACHE_SIZE 192
 #define CACHE_SLOTS 3
+*/
 
 
 /* End of configuration
