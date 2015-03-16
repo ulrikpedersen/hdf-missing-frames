@@ -2,6 +2,5 @@
 *.o
 *.d
 
-*.h5
 */hdf-missing-frames
 
